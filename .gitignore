@@ -5,3 +5,17 @@ resources/references.json
 test/results.json
 temporary-results
 misc/participant-removal.sh
+
+# Rust build artifacts
+/target/
+
+# Index file (large binary, built at docker build time)
+/resources/references.json.gz
+/bench-results/
+*.bin
+
+# Local-only files
+CLAUDE.md
+AGENTS.md
+sauce-secret/
+/specs/rinha-2026/

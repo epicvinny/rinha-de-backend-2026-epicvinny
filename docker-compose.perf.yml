@@ -1,0 +1,26 @@
+services:
+  nginx:
+    volumes:
+      - ./nginx.perf.conf:/etc/nginx/nginx.conf:ro
+
+  api1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rinha-2026-perf:local
+    environment:
+      - PERF_TRACE=1
+      - PERF_TRACE_EVERY=${PERF_TRACE_EVERY:-10000}
+      - PERF_TRACE_SLOW_US=${PERF_TRACE_SLOW_US:-1000}
+      - PERF_TRACE_SAMPLE=${PERF_TRACE_SAMPLE:-0}
+
+  api2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rinha-2026-perf:local
+    environment:
+      - PERF_TRACE=1
+      - PERF_TRACE_EVERY=${PERF_TRACE_EVERY:-10000}
+      - PERF_TRACE_SLOW_US=${PERF_TRACE_SLOW_US:-1000}
+      - PERF_TRACE_SAMPLE=${PERF_TRACE_SAMPLE:-0}

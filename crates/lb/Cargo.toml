@@ -1,0 +1,9 @@
+[package]
+name = "lb"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["io-util", "macros", "net", "rt", "sync", "time"] }
+libc = "0.2"
+mimalloc = { version = "0.1", default-features = false }
