@@ -1,11 +1,12 @@
 # Rinha de Backend 2026 — submission (test files only; no source code).
-# Winning topology: C FD-handoff load balancer (SCM_RIGHTS round-robin) + 2 API
-# instances running a single-threaded epoll reactor with EPIOCSPARAMS NAPI
-# busy-poll (kernel >= 6.9; graceful fallback) and the tree-only classifier.
+# Topology: C FD-handoff load balancer (SCM_RIGHTS round-robin) + 2 API instances
+# running the from-scratch C-static epoll reactor (EPIOCSPARAMS NAPI busy-poll,
+# flat fd state, no per-conn alloc) that calls the Rust scorer via FFI. Same
+# byte-identical scoring as the Rust path; tree-only classifier.
 # Image is prebuilt and public on Docker Hub.
 services:
   lb:
-    image: visuzano/rinha-2026:uring-dfd89b3
+    image: visuzano/rinha-2026:epoll-clean-ec97581
     command: ["/opt/fd_handoff_lb"]
     cpuset: "2,3"
     ports:
@@ -14,7 +15,6 @@ services:
       - LB_LISTEN=0.0.0.0:9999
       - BACKENDS=unix:/sockets/api1-fd.sock,unix:/sockets/api2-fd.sock
       - LB_SELF_WARM=2000
-      - LB_PIN_CPU=2
     volumes:
       - backend-sockets:/sockets
     ulimits:
@@ -35,7 +35,8 @@ services:
       - rinha
 
   api1:
-    image: visuzano/rinha-2026:uring-dfd89b3
+    image: visuzano/rinha-2026:epoll-clean-ec97581
+    command: ["/opt/api_c_reactor"]
     cpuset: "0"
     environment:
       - PORT=8080
@@ -71,7 +72,8 @@ services:
       - rinha
 
   api2:
-    image: visuzano/rinha-2026:uring-dfd89b3
+    image: visuzano/rinha-2026:epoll-clean-ec97581
+    command: ["/opt/api_c_reactor"]
     cpuset: "1"
     environment:
       - PORT=8080
