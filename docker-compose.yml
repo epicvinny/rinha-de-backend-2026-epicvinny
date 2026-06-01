@@ -6,7 +6,7 @@
 # Image is prebuilt and public on Docker Hub.
 services:
   lb:
-    image: visuzano/rinha-2026:epoll-clean-ec97581
+    image: visuzano/rinha-2026:nosockbp-56ddb38
     command: ["/opt/fd_handoff_lb"]
     cpuset: "2,3"
     ports:
@@ -35,7 +35,7 @@ services:
       - rinha
 
   api1:
-    image: visuzano/rinha-2026:epoll-clean-ec97581
+    image: visuzano/rinha-2026:nosockbp-56ddb38
     command: ["/opt/api_c_reactor"]
     cpuset: "0"
     environment:
@@ -47,6 +47,7 @@ services:
       - API_BUSY_POLL_US=50
       - API_BUSY_POLL_BUDGET=8
       - API_PREFER_BUSY_POLL=1
+      - API_SOCK_BUSY_POLL=0
       - API_PIN_CPU=0
     volumes:
       - backend-sockets:/sockets
@@ -72,7 +73,7 @@ services:
       - rinha
 
   api2:
-    image: visuzano/rinha-2026:epoll-clean-ec97581
+    image: visuzano/rinha-2026:nosockbp-56ddb38
     command: ["/opt/api_c_reactor"]
     cpuset: "1"
     environment:
@@ -84,6 +85,7 @@ services:
       - API_BUSY_POLL_US=50
       - API_BUSY_POLL_BUDGET=8
       - API_PREFER_BUSY_POLL=1
+      - API_SOCK_BUSY_POLL=0
       - API_PIN_CPU=1
     volumes:
       - backend-sockets:/sockets
